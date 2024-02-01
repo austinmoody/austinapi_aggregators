@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"time"
 )
@@ -28,14 +29,12 @@ func main() {
 
 	startDate, err := time.Parse("2006-01-02", *startDateInput)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to parse the start date: %v", err)
-		os.Exit(1)
+		log.Fatalf("Failed to parse the start date: %v", err)
 	}
 
 	endDate, err := time.Parse("2006-01-02", *endDateInput)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to parse the end date: %v", err)
-		os.Exit(1)
+		log.Fatalf("Failed to parse the end date: %v", err)
 	}
 
 	fmt.Println("Processing Oura Ring Type: " + customFlag.Value)

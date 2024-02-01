@@ -12,7 +12,7 @@ type TypeChoices struct {
 
 func (s *TypeChoices) Set(value string) error {
 	if !contains(s.Options, value) {
-		return fmt.Errorf("Invalid value, must be one of: %s", strings.Join(s.Options, ", "))
+		return fmt.Errorf("nvalid value, must be one of: %s", strings.Join(s.Options, ", "))
 	}
 	s.Value = value
 	return nil
