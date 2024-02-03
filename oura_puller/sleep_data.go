@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/austinmoody/go_oura"
 	"github.com/joho/godotenv"
@@ -30,9 +29,9 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 
 	// Get Sleep from API, has information about durations & start/end time etc...
 	fmt.Printf("Pulling Sleep Items\n")
-	sleepDocs, ouraError := client.GetSleeps(startDate, endDate, nil)
-	if ouraError != nil {
-		fmt.Printf("Error getting Sleep Items: %v\n", ouraError)
+	sleepDocs, err := client.GetSleeps(startDate, endDate, nil)
+	if err != nil {
+		fmt.Printf("Error getting Sleep Items: %v\n", err)
 		return
 	}
 
@@ -43,9 +42,9 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 
 	// Get Daily Sleep from API, has the Score
 	fmt.Printf("Pulling Daily Sleep Items\n")
-	dailySleeps, ouraError := client.GetDailySleeps(startDate, endDate, nil)
-	if ouraError != nil {
-		fmt.Printf("Error getting Daily Sleep items: %v\n", ouraError)
+	dailySleeps, err := client.GetDailySleeps(startDate, endDate, nil)
+	if err != nil {
+		fmt.Printf("Error getting Daily Sleep items: %v\n", err)
 	}
 
 	for _, dailySleep := range dailySleeps.Items {
@@ -54,72 +53,10 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 	}
 }
 
-func GetDatabaseConnectionString() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	databaseHost := os.Getenv("DATABASE_HOST")
-	databasePort := os.Getenv("DATABASE_PORT")
-	databaseUser := os.Getenv("DATABASE_USER")
-	databasePassword := os.Getenv("DATABASE_PASSWORD")
-	databaseName := os.Getenv("DATABASE_NAME")
-	sslMode := os.Getenv("DATABASE_SSLMODE")
-
-	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		databaseHost,
-		databasePort,
-		databaseUser,
-		databasePassword,
-		databaseName,
-		sslMode,
-	)
-}
-
 func InsertSleepData(date string, rating int, totalDuration int) {
-	connStr := GetDatabaseConnectionString()
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Don't forget to close the connection!
-	defer db.Close()
-
-	// Prepares statement for inserting data
-	stmt, err := db.Prepare("INSERT INTO sleep (date, rating, total_duration) VALUES ($1, $2, $3) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Inserts our data
-	_, err = stmt.Exec(date, rating, totalDuration)
-	if err != nil {
-		log.Fatal(err)
-	}
+	InsertData("INSERT INTO sleep (date, rating, total_duration) VALUES ($1, $2, $3) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;", date, rating, totalDuration)
 }
 
 func InsertDailySleepData(date string, score int64) {
-	connStr := GetDatabaseConnectionString()
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Don't forget to close the connection!
-	defer db.Close()
-
-	// Prepares statement for inserting data
-	stmt, err := db.Prepare("INSERT INTO sleep (date, rating) VALUES ($1, $2) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Inserts our data
-	_, err = stmt.Exec(date, score)
-	if err != nil {
-		log.Fatal(err)
-	}
+	InsertData("INSERT INTO sleep (date, rating) VALUES ($1, $2) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;", date, score)
 }

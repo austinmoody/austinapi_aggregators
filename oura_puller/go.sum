@@ -1,5 +1,7 @@
 github.com/austinmoody/go_oura v0.0.1 h1:TIeZfM3OD7Lo8e503EvCkpL80tTsMYoQtB9ReYr7H/E=
 github.com/austinmoody/go_oura v0.0.1/go.mod h1:zj8bFoYjHy7+pxxcKXeDf8tD+Vb8qMp7IitLrSo4Nas=
+github.com/austinmoody/go_oura v0.0.2 h1:CsaF9bJs4DJoTMRFiKSHwz2sC0Ia0W59OIhg2vCt6Fg=
+github.com/austinmoody/go_oura v0.0.2/go.mod h1:zj8bFoYjHy7+pxxcKXeDf8tD+Vb8qMp7IitLrSo4Nas=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
