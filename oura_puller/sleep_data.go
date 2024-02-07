@@ -44,19 +44,19 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 		sleep, ok := sleepData[sleepDoc.Day.Time]
 		if ok {
 			// This item already exists in map, add values
-			sleep.TotalSleep += int32(sleepDoc.TotalSleepDuration)
-			sleep.LightSleep += int32(sleepDoc.LightSleepDuration)
-			sleep.DeepSleep += int32(sleepDoc.DeepSleepDuration)
-			sleep.RemSleep += int32(sleepDoc.RemSleepDuration)
+			sleep.TotalSleep += sleepDoc.TotalSleepDuration
+			sleep.LightSleep += sleepDoc.LightSleepDuration
+			sleep.DeepSleep += sleepDoc.DeepSleepDuration
+			sleep.RemSleep += sleepDoc.RemSleepDuration
 			sleepData[sleepDoc.Day.Time] = sleep
 		} else {
 			// Add new
 			sleepData[sleepDoc.Day.Time] = austinapi_db.Sleep{
 				Date:       sleepDoc.Day.Time,
-				TotalSleep: int32(sleepDoc.TotalSleepDuration), // TODO change go_oura or db to match
-				LightSleep: int32(sleepDoc.LightSleepDuration),
-				DeepSleep:  int32(sleepDoc.DeepSleepDuration),
-				RemSleep:   int32(sleepDoc.RemSleepDuration),
+				TotalSleep: sleepDoc.TotalSleepDuration,
+				LightSleep: sleepDoc.LightSleepDuration,
+				DeepSleep:  sleepDoc.DeepSleepDuration,
+				RemSleep:   sleepDoc.RemSleepDuration,
 			}
 		}
 
@@ -75,13 +75,13 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 		sleep, ok := sleepData[dailySleep.Day.Time]
 		if ok {
 			// This item already exists in map, add values
-			sleep.Rating = int32(dailySleep.Score) // TODO change go_oura or db to match
+			sleep.Rating = dailySleep.Score
 			sleepData[dailySleep.Day.Time] = sleep
 		} else {
 			// Add new
 			sleepData[dailySleep.Day.Time] = austinapi_db.Sleep{
 				Date:   dailySleep.Day.Time,
-				Rating: int32(dailySleep.Score),
+				Rating: dailySleep.Score,
 			}
 		}
 
