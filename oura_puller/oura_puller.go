@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -23,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	if customFlag.Value == "" {
-		fmt.Println("You must specify Oura Ring data type")
+		log.Println("You must specify Oura Ring data type")
 		os.Exit(1)
 	}
 
@@ -37,10 +36,10 @@ func main() {
 		log.Fatalf("Failed to parse the end date: %v", err)
 	}
 
-	fmt.Println("Processing Oura Ring Type: " + customFlag.Value)
-	fmt.Println("Start Date: " + startDate.Format("2006-01-02"))
-	fmt.Println("End Date: " + endDate.Format("2006-01-02"))
-	fmt.Println("--------------------------------------------")
+	log.Println("Processing Oura Ring Type: " + customFlag.Value)
+	log.Println("Start Date: " + startDate.Format("2006-01-02"))
+	log.Println("End Date: " + endDate.Format("2006-01-02"))
+	log.Println("--------------------------------------------")
 
 	if customFlag.Value == "sleep" {
 		ProcessSleep(startDate, endDate)
@@ -57,5 +56,5 @@ func printBanner() {
 AustinAPI Oura Ring Data Puller
 ============================================
 `
-	fmt.Print(banner)
+	log.Print(banner)
 }

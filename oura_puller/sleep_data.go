@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"github.com/austinmoody/austinapi_db/austinapi_db"
 	"github.com/austinmoody/go_oura"
+	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"log"
@@ -28,35 +30,99 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 	client := go_oura.NewClient(ouraPersonalToken)
 
 	// Get Sleep from API, has information about durations & start/end time etc...
-	fmt.Printf("Pulling Sleep Items\n")
+	log.Printf("Pulling Sleep Items")
 	sleepDocs, err := client.GetSleeps(startDate, endDate, nil)
 	if err != nil {
-		fmt.Printf("Error getting Sleep Items: %v\n", err)
+		log.Printf("Error getting Sleep Items: %v\n", err)
 		return
 	}
 
+	sleepData := make(map[time.Time]austinapi_db.Sleep)
+
 	for _, sleepDoc := range sleepDocs.Items {
-		InsertSleepData(sleepDoc.Day.Format("2006-01-02"), 0, sleepDoc.TotalSleepDuration)
-		fmt.Printf("\tSleep Item %s Inserted\n", sleepDoc.ID)
+
+		sleep, ok := sleepData[sleepDoc.Day.Time]
+		if ok {
+			// This item already exists in map, add values
+			sleep.TotalSleep += int32(sleepDoc.TotalSleepDuration)
+			sleep.LightSleep += int32(sleepDoc.LightSleepDuration)
+			sleep.DeepSleep += int32(sleepDoc.DeepSleepDuration)
+			sleep.RemSleep += int32(sleepDoc.RemSleepDuration)
+			sleepData[sleepDoc.Day.Time] = sleep
+		} else {
+			// Add new
+			sleepData[sleepDoc.Day.Time] = austinapi_db.Sleep{
+				Date:       sleepDoc.Day.Time,
+				TotalSleep: int32(sleepDoc.TotalSleepDuration), // TODO change go_oura or db to match
+				LightSleep: int32(sleepDoc.LightSleepDuration),
+				DeepSleep:  int32(sleepDoc.DeepSleepDuration),
+				RemSleep:   int32(sleepDoc.RemSleepDuration),
+			}
+		}
+
+		log.Printf("Processed Sleep with ID: %s\n", sleepDoc.ID)
 	}
 
 	// Get Daily Sleep from API, has the Score
-	fmt.Printf("Pulling Daily Sleep Items\n")
+	log.Printf("Pulling Daily Sleep Items\n")
 	dailySleeps, err := client.GetDailySleeps(startDate, endDate, nil)
 	if err != nil {
-		fmt.Printf("Error getting Daily Sleep items: %v\n", err)
+		log.Printf("Error getting Daily Sleep items: %v\n", err)
 	}
 
 	for _, dailySleep := range dailySleeps.Items {
-		InsertDailySleepData(dailySleep.Day.Format("2006-01-02"), dailySleep.Score)
-		fmt.Printf("\tDaily Sleep Item %s Inserted\n", dailySleep.ID)
+
+		sleep, ok := sleepData[dailySleep.Day.Time]
+		if ok {
+			// This item already exists in map, add values
+			sleep.Rating = int32(dailySleep.Score) // TODO change go_oura or db to match
+			sleepData[dailySleep.Day.Time] = sleep
+		} else {
+			// Add new
+			sleepData[dailySleep.Day.Time] = austinapi_db.Sleep{
+				Date:   dailySleep.Day.Time,
+				Rating: int32(dailySleep.Score),
+			}
+		}
+
+		log.Printf("Processed Daily Sleep with ID: %s\n", dailySleep.ID)
 	}
+
+	InsertSleepData(sleepData)
 }
 
-func InsertSleepData(date string, rating int, totalDuration int) {
-	InsertData("INSERT INTO sleep (date, rating, total_duration) VALUES ($1, $2, $3) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;", date, rating, totalDuration)
-}
+func InsertSleepData(sleepData map[time.Time]austinapi_db.Sleep) {
 
-func InsertDailySleepData(date string, score int64) {
-	InsertData("INSERT INTO sleep (date, rating) VALUES ($1, $2) ON CONFLICT (date) DO UPDATE SET rating = EXCLUDED.rating;", date, score)
+	connStr := GetDatabaseConnectionString()
+	ctx := context.Background()
+
+	conn, err := pgx.Connect(ctx, connStr)
+	if err != nil {
+		log.Fatalf("DB Connection error: %v", err)
+	}
+	defer conn.Close(ctx)
+
+	apiDb := austinapi_db.New(conn)
+
+	for _, sleep := range sleepData {
+
+		// Don't save if one of these is missing... shouldn't happen
+		if sleep.Rating == 0 || sleep.TotalSleep == 0 {
+			continue
+		}
+
+		params := austinapi_db.SaveSleepParams{
+			Date:       sleep.Date,
+			Rating:     sleep.Rating,
+			TotalSleep: sleep.TotalSleep,
+			LightSleep: sleep.LightSleep,
+			DeepSleep:  sleep.DeepSleep,
+			RemSleep:   sleep.RemSleep,
+		}
+
+		err = apiDb.SaveSleep(ctx, params)
+		if err != nil {
+			log.Fatalf("Insert error: %v", err)
+		}
+	}
 }
