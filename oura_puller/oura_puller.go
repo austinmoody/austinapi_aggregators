@@ -2,10 +2,29 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"time"
 )
+
+var (
+	OuraPersonalToken        string
+	DatabaseConnectionString string
+)
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("No .env file, pull from system environment")
+	}
+
+	OuraPersonalToken, err = GetEnvString("OURA_PERSONAL_TOKEN")
+	FailIfError(err)
+
+	DatabaseConnectionString = GetDatabaseConnectionString()
+}
 
 func main() {
 
@@ -41,8 +60,18 @@ func main() {
 	log.Println("End Date: " + endDate.Format("2006-01-02"))
 	log.Println("--------------------------------------------")
 
-	if customFlag.Value == "sleep" {
-		ProcessSleep(startDate, endDate)
+	switch customFlag.Value {
+	case "sleep":
+		processSleep(startDate, endDate)
+	case "readiness":
+		processReadiness(startDate, endDate)
+	}
+
+}
+
+func FailIfError(err error) {
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -57,4 +86,35 @@ AustinAPI Oura Ring Data Puller
 ============================================
 `
 	log.Print(banner)
+}
+
+func GetDatabaseConnectionString() string {
+
+	databaseHost, err := GetEnvString("DATABASE_HOST")
+	FailIfError(err)
+
+	databasePort, err := GetEnvString("DATABASE_PORT")
+	FailIfError(err)
+
+	databaseUser, err := GetEnvString("DATABASE_USER")
+	FailIfError(err)
+
+	databasePassword, err := GetEnvString("DATABASE_PASSWORD")
+	FailIfError(err)
+
+	databaseName, err := GetEnvString("DATABASE_NAME")
+	FailIfError(err)
+
+	sslMode, err := GetEnvString("DATABASE_SSLMODE")
+	FailIfError(err)
+
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		databaseHost,
+		databasePort,
+		databaseUser,
+		databasePassword,
+		databaseName,
+		sslMode,
+	)
 }

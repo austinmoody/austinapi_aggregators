@@ -5,29 +5,23 @@ import (
 	"github.com/austinmoody/austinapi_db/austinapi_db"
 	"github.com/austinmoody/go_oura"
 	"github.com/jackc/pgx/v5"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"log"
-	"os"
 	"time"
 )
 
-func ProcessSleep(startDate time.Time, endDate time.Time) {
+func processSleep(startDate time.Time, endDate time.Time) {
 
-	// TODO: Something to think about... specifying a start & end a day apart.
+	// Something to think about... specifying a start & end a day apart.
 	// so Start = 2024-01-29 & End = 2024-01-30
 	// Sleep will bring back 1 item dated 2024-01-29
 	// Daily Sleep will bring back 1 items: 2024-01-29 and 2024-01-30
 
 	// Pull Oura token from environment
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	ouraPersonalToken := os.Getenv("OURA_PERSONAL_TOKEN")
+	//ouraPersonalToken := os.Getenv("OURA_PERSONAL_TOKEN")
 
 	// Here we would use oura_go to pull sleep data and parse out what we need
-	client := go_oura.NewClient(ouraPersonalToken)
+	client := go_oura.NewClient(OuraPersonalToken)
 
 	// Get Sleep from API, has information about durations & start/end time etc...
 	log.Printf("Pulling Sleep Items")
@@ -88,15 +82,14 @@ func ProcessSleep(startDate time.Time, endDate time.Time) {
 		log.Printf("Processed Daily Sleep with ID: %s\n", dailySleep.ID)
 	}
 
-	InsertSleepData(sleepData)
+	insertSleepData(sleepData)
 }
 
-func InsertSleepData(sleepData map[time.Time]austinapi_db.Sleep) {
+func insertSleepData(sleepData map[time.Time]austinapi_db.Sleep) {
 
-	connStr := GetDatabaseConnectionString()
 	ctx := context.Background()
 
-	conn, err := pgx.Connect(ctx, connStr)
+	conn, err := pgx.Connect(ctx, DatabaseConnectionString)
 	if err != nil {
 		log.Fatalf("DB Connection error: %v", err)
 	}
