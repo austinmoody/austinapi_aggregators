@@ -38,12 +38,12 @@ func insertReadinessData(readiness go_oura.DailyReadiness) {
 
 	apiDb := austinapi_db.New(conn)
 
-	params := austinapi_db.SavePreparednessParams{
-		Date:   readiness.Day.Time,
-		Rating: readiness.Score,
+	params := austinapi_db.SaveReadyScoreParams{
+		Date:  readiness.Day.Time,
+		Score: readiness.Score,
 	}
 
-	err = apiDb.SavePreparedness(ctx, params)
+	err = apiDb.SaveReadyScore(ctx, params)
 	if err != nil {
 		log.Fatalf("Insert error: %v", err)
 	}
