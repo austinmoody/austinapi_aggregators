@@ -1,15 +1,5 @@
-github.com/austinmoody/austinapi_db v0.0.1 h1:TPGcfZ5dqR9VNyaE+Lv0PmBahvOl/blTQWJg7NlFLAU=
-github.com/austinmoody/austinapi_db v0.0.1/go.mod h1:EY83cSMVSPurpOR+zsPRbP9lMk1pFJqe3rbRYJyXk8U=
-github.com/austinmoody/austinapi_db v0.0.3 h1:JbFuyrQdxa5iTUCwfoKaUpbIXPQRWtlNOUhNno8g0CU=
-github.com/austinmoody/austinapi_db v0.0.3/go.mod h1:EY83cSMVSPurpOR+zsPRbP9lMk1pFJqe3rbRYJyXk8U=
-github.com/austinmoody/austinapi_db v0.0.4 h1:ZHTq8FS7Q2pA4FoM/OJgSrfUlSC1olGaHlN2GVwxSr0=
-github.com/austinmoody/austinapi_db v0.0.4/go.mod h1:EY83cSMVSPurpOR+zsPRbP9lMk1pFJqe3rbRYJyXk8U=
-github.com/austinmoody/austinapi_db v0.0.5 h1:eY3blaWBH3gaVMi1kDQ+Dh8Zjgu8Zv1RkXSVt7W9koA=
-github.com/austinmoody/austinapi_db v0.0.5/go.mod h1:EY83cSMVSPurpOR+zsPRbP9lMk1pFJqe3rbRYJyXk8U=
-github.com/austinmoody/austinapi_db v0.0.6 h1:xprF9RDk77WUEuB5xxfiSBFsjbXXgKiiyhL446xq4E4=
-github.com/austinmoody/austinapi_db v0.0.6/go.mod h1:EY83cSMVSPurpOR+zsPRbP9lMk1pFJqe3rbRYJyXk8U=
-github.com/austinmoody/austinapi_db v0.0.12 h1:JV/Qr1UeNNtv4UBH4iJNsRLL6qJ3cJGEjceqfRXSqQQ=
-github.com/austinmoody/austinapi_db v0.0.12/go.mod h1:C2DAp+MY1utOvEdpJaK9bspeawlLMZXVvullBiTXFLo=
+github.com/austinmoody/austinapi_db v0.0.14 h1:XRMWZ3MxNkzAiQrfPN+NcofaO/sGF/sGiD31IqB5Lnk=
+github.com/austinmoody/austinapi_db v0.0.14/go.mod h1:C2DAp+MY1utOvEdpJaK9bspeawlLMZXVvullBiTXFLo=
 github.com/austinmoody/go_oura v0.0.2 h1:CsaF9bJs4DJoTMRFiKSHwz2sC0Ia0W59OIhg2vCt6Fg=
 github.com/austinmoody/go_oura v0.0.2/go.mod h1:zj8bFoYjHy7+pxxcKXeDf8tD+Vb8qMp7IitLrSo4Nas=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -32,7 +32,7 @@ func main() {
 
 	// Setup Command Line Arguments
 	var customFlag TypeChoices
-	customFlag.Options = []string{"sleep", "readiness"}
+	customFlag.Options = []string{"sleep", "readiness", "heartrate"}
 	flag.Var(&customFlag, "type", "Oura Ring data type to pull")
 
 	startDateInput := flag.String("start-date", time.Now().Add(-24*time.Hour).Format("2006-01-02"), "Start date to search for Oura Ring data (defaults to yesterday")
@@ -65,6 +65,8 @@ func main() {
 		processSleep(startDate, endDate)
 	case "readiness":
 		processReadiness(startDate, endDate)
+	case "heartrate":
+		processHeartRate(startDate, endDate)
 	}
 
 }
